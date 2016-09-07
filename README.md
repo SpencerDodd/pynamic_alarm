@@ -12,5 +12,6 @@ directory (../pynamic_alarm/)
 
 Then cd to src and start it up
 ```bash
+cd src
 python alarm.py
 ```
