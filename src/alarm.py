@@ -175,6 +175,35 @@ def update_alarms():
 		# if there isn't an alarm at this event's time, add it
 		if event_time not in alarms.keys() and not_before_cutoff(event_time):
 			create_alarm(event_name, event_time, event_location)
+
+	# Now check through the alarms, and remove any alarms that no longer
+	# have an event in the queue
+	#	- works to remove both deleted and activated alarms
+	alarms_to_delete = []
+	for alarm_time in alarms:
+		alarm = alarms[alarm_time]
+		alarm_in_events = False
+		for event in events:
+			event_name = event.get('summary')
+			event_time = event.get('start').get('dateTime')
+			event_location = event.get('location')
+
+			if alarm.alert_title == event_name and \
+				alarm.alert_time == event_time and \
+				alarm.alert_location == event_location:
+
+				alarm_in_events = True
+
+		if not alarm_in_events:
+			print "deleting event"
+			print "	{}".format(alarm.alert_title)
+			print "	{}".format(alarm.alert_time)
+			print "	{}".format(alarm.alert_location)
+			alarms_to_delete.append(alarm_time)
+
+	for alarm_time in alarms_to_delete:
+		del alarms[alarm_time]
+
 			
 def not_before_cutoff(event_time):
 	""" This method checks to make sure that an event's time is not before
@@ -235,6 +264,9 @@ def format_time(timestring, time_format):
 
 
 def main():
+	current_time = "2016-09-07T28:16"
+	new_alarm = AlarmAlert("test", current_time, "here")
+	alarms[current_time] = new_alarm
 	while True:
 		update_alarms()
 		check_alarms()
