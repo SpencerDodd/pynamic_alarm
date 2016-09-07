@@ -1,0 +1,6 @@
+# credential files
+*.json
+# .pyc files
+*.pyc
+# python venv
+/venv/**
