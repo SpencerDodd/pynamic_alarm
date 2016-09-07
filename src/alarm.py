@@ -46,7 +46,34 @@ alarm_cutoff_time = 4 # Earliest time an alarmed event can start (24hr clock)
 ### ===========================================================================
 ### ==== DATA STRUCTURES ======================================================
 ### ===========================================================================
+class AlarmAlert:
 
+	def __init__(self, alert_time, alert_title):
+		self.alert_time = alert_time
+		self.alert_title = alert_title
+
+	def alarm_alert(self):
+		"""Alerts for an alarm.
+
+		Includes playing alarm tones and text to speech of the alarm title for
+		the alerting event.
+		"""
+		print "Alerting for {} at {}".format(self.alert_title, self.alert_time)
+		message = "{}".format(self.alert_title)
+	
+		engine = pyttsx.init()
+		engine.say(message)
+		engine.runAndWait()
+		
+		# sleep for as long as it would take to say the text
+		print "speaking"
+		time.sleep(len(message) / 5)
+		print "done speaking"
+		return
+
+	def run(self):
+		t = threading.Thread(target=self.alarm_alert)
+		t.start()
 
 ### ===========================================================================
 ### ==== METHODS ==============================================================
@@ -101,32 +128,13 @@ def get_upcoming_events():
 		print(start, event['summary'])
 
 def text_to_speech(text):
-	"""Speaks the given text as audio on the device running the alarm app.
-	"""
-	message = "{}".format(text)
-	
-	engine = pyttsx.init()
-	engine.say(message)
-	engine.runAndWait()
-	
-	# sleep for as long as it would take to say the text
-	print "speaking"
-	time.sleep(len(text) / 5)
-	print "done speaking"
-	return 0
+	pass
 
 def main():
-	threads = []
-	comments = [
-		"This is just a test test test test test"
-	]
-	for i in comments:
-		t = threading.Thread(target=text_to_speech, args=(i,))
-		t.start()
-
-	while True:
-		time.sleep(1)
-		print "running"
+	print "start"
+	alarm = AlarmAlert("now", "Test Event")
+	alarm.run()
+	print "finish"
 
 
 if __name__ == '__main__':
