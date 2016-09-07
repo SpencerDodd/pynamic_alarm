@@ -1,5 +1,6 @@
 # pynamic Alarm
-
+This project is an alarm clock based off of Gmail Calendar integretion. 
+The alarm system goes off dynamically based on events in your calendar. This was created 
 ## Installation
 First thing to do is make sure you have all of the requirements grabbed
 through your package manager.

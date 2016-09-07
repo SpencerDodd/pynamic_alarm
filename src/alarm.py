@@ -264,9 +264,9 @@ def format_time(timestring, time_format):
 
 
 def main():
-	current_time = "2016-09-07T28:16"
-	new_alarm = AlarmAlert("test", current_time, "here")
-	alarms[current_time] = new_alarm
+	"""current_time = "2016-09-07T28:16"
+				new_alarm = AlarmAlert("test", current_time, "here")
+				alarms[current_time] = new_alarm"""
 	while True:
 		update_alarms()
 		check_alarms()
