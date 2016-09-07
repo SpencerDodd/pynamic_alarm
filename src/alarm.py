@@ -6,8 +6,12 @@ On alarm:
 	play alarm tone
 	text to speech name of calendar event
 """
+# error checks
+import faulthandler
+faulthandler.enable()
 
 import os
+import sys
 import json
 import time
 import pydub # for splicing alarm and alert audio
@@ -20,7 +24,6 @@ from apiclient import discovery
 import oauth2client
 from oauth2client import client
 from oauth2client import tools
-#from __future__ import print_function
 
 try:
     import argparse
@@ -42,6 +45,7 @@ BASE_DIR = os.path.normpath(os.getcwd() + os.sep + os.pardir + os.sep)
 ### ==== APPLICATION VARIABLES ================================================
 ### ===========================================================================
 alarm_cutoff_time = 4 # Earliest time an alarmed event can start (24hr clock)
+alarms = {} # dict: key = time of alarm, value = AlarmAlert for event
 
 ### ===========================================================================
 ### ==== DATA STRUCTURES ======================================================
@@ -61,6 +65,12 @@ class AlarmAlert:
 		print "Alerting for {} at {}".format(self.alert_title, self.alert_time)
 		message = "{}".format(self.alert_title)
 	
+		# Alarm noise
+		alarm_location = os.path.join(BASE_DIR, "static/alarm.wav")
+		subprocess.Popen(["afplay", alarm_location])
+		time.sleep(5)
+
+		# Text to speech
 		engine = pyttsx.init()
 		engine.say(message)
 		engine.runAndWait()
@@ -74,6 +84,7 @@ class AlarmAlert:
 	def run(self):
 		t = threading.Thread(target=self.alarm_alert)
 		t.start()
+
 
 ### ===========================================================================
 ### ==== METHODS ==============================================================
@@ -97,7 +108,9 @@ def get_credentials():
 	store = oauth2client.file.Storage(credential_path)
 	credentials = store.get()
 	if not credentials or credentials.invalid:
-		flow = client.flow_from_clientsecrets(os.path.join(home_dir, CLIENT_SECRET_FILE), SCOPES)
+		flow = client.flow_from_clientsecrets(
+			os.path.join(home_dir, CLIENT_SECRET_FILE), 
+			SCOPES)
 		flow.user_agent = APPLICATION_NAME
 		if flags:
 			credentials = tools.run_flow(flow, store, flags)
@@ -127,18 +140,23 @@ def get_upcoming_events():
 		start = event['start'].get('dateTime', event['start'].get('date'))
 		print(start, event['summary'])
 
-def text_to_speech(text):
-	pass
-
 def main():
-	print "start"
 	alarm = AlarmAlert("now", "Test Event")
 	alarm.run()
-	print "finish"
+	while True:
+		pass
+		time.sleep(1)
 
 
 if __name__ == '__main__':
-	main()
+	try:
+		main()
+	except KeyboardInterrupt:
+		print "\n\nInterrupted. Exiting ...\n"
+		try:
+			sys.exit(0)
+		except SystemExit:
+			os._exit(0)
 
 
 
