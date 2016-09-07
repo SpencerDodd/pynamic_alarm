@@ -7,7 +7,7 @@ through your package manager.
 pip install -r requirements.txt
 ```
 Next, you need to grab your client_secret.json from google's api manager
-credentials page [https://console.developers.google.com/apis/credentials?project=windy-planet-142714](here)
+credentials page [here](https://console.developers.google.com/apis/credentials?project=windy-planet-142714)
 
 Then cd to src and start it up
 ```bash
